@@ -7,6 +7,15 @@
     <title>F1 Next Race Information</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#000000">
+    <script>
+        if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/service-worker.js")
+            .then(() => console.log("Service Worker registered"))
+            .catch(err => console.log("SW registration failed", err));
+        }
+    </script>
 </head>
 
 <body class="bg-gray-100">
@@ -19,7 +28,8 @@
 
         <!-- Main Race Section -->
         <div class="bg-red-600 text-white rounded-lg p-6 shadow-lg mb-8 text-center">
-            <h2 class="text-3xl font-bold mb-4">Main Race</h2>
+            <p class="text-lg opacity-90">Round <span id="round"></span></p>
+            <h2 class="text-3xl font-bold mb-4">Main Race</span></h2>
             <div id="mainRaceContainer">
                 <div id="mainRaceCountdown" class="grid grid-cols-4 gap-4 text-center mb-4">
                     <div class="bg-red-700 rounded p-3">
@@ -46,7 +56,7 @@
                     <p class="text-white mt-2">Race Completed</p>
                 </div>
             </div>
-            <p class="text-lg opacity-90">Round <span id="round"></span></p>
+            <p class="text-lg opacity-90" id="mainRaceDate"></p>
         </div>
 
         <!-- Sessions Grid -->
@@ -87,8 +97,21 @@
             }
         }
 
+        function formatDateToLocalString(date) {
+            return new Date(date + "Z").toLocaleString({
+                timeZone: "UTC",
+                hour12: true,
+                year: "numeric",
+                month: "short",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        }
+
         function createCountdownElement(sessionName, date, index) {
             const elementId = `session${index}`;
+            const target = formatDateToLocalString(date);
             return `
                 <div class="bg-white rounded-lg p-6 shadow-md text-center">
                     <h3 class="text-xl font-semibold text-gray-800 mb-3">${sessionName}</h3>
@@ -111,6 +134,7 @@
                                 <span class="text-xs text-black">Sec</span>
                             </div>
                         </div>
+                        <h4 class="text-xl font-semibold text-gray-600 mb-3 mt-3">${target}</h4>
                         <div id="${elementId}Completed" class="hidden mt-4">
                             <div class="bg-green-500 rounded-full w-12 h-12 mx-auto flex items-center justify-center">
                                 <i class="fas fa-check text-white text-xl"></i>
@@ -130,6 +154,7 @@
             document.getElementById('circuitName').textContent = data.circuit_name;
             document.getElementById('country').textContent = data.country;
             document.getElementById('round').textContent = data.round;
+            document.getElementById('mainRaceDate').textContent = formatDateToLocalString(data.race_date);
 
             // Create session boxes with countdowns
             const sessionsGrid = document.getElementById('sessionsGrid');
