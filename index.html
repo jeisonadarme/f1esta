@@ -11,9 +11,9 @@
     <meta name="theme-color" content="#000000">
     <script>
         if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/service-worker.js")
-            .then(() => console.log("Service Worker registered"))
-            .catch(err => console.log("SW registration failed", err));
+            navigator.serviceWorker.register("/service-worker.js")
+                .then(() => console.log("Service Worker registered"))
+                .catch(err => console.log("SW registration failed", err));
         }
     </script>
 </head>
@@ -63,6 +63,16 @@
         <div id="sessionsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Session boxes will be populated by JavaScript -->
         </div>
+
+        <!-- All Races List -->
+        <div class="mt-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">2025 F1 Calendar</h2>
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div id="racesList" class="divide-y divide-gray-200">
+                    <!-- Race list will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -98,15 +108,38 @@
         }
 
         function formatDateToLocalString(date) {
-            return new Date(date + "Z").toLocaleString({
-                timeZone: "UTC",
-                hour12: true,
-                year: "numeric",
-                month: "short",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit"
-            });
+            return new Date(date + "Z").toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+        }
+
+        function getCountryFlag(countryName) {
+            const countryFlags = {
+                'Australia': '🇦🇺',
+                'Austria': '🇦🇹',
+                'Azerbaijan': '🇦🇿',
+                'Bahrain': '🇧🇭',
+                'Belgium': '🇧🇪',
+                'Brazil': '🇧🇷',
+                'Canada': '🇨🇦',
+                'China': '🇨🇳',
+                'Hungary': '🇭🇺',
+                'Italy': '🇮🇹',
+                'Japan': '🇯🇵',
+                'Mexico': '🇲🇽',
+                'Monaco': '🇲🇨',
+                'Netherlands': '🇳🇱',
+                'Qatar': '🇶🇦',
+                'Saudi Arabia': '🇸🇦',
+                'Singapore': '🇸🇬',
+                'Spain': '🇪🇸',
+                'United Arab Emirates': '🇦🇪',
+                'United Kingdom': '🇬🇧',
+                'United States': '🇺🇸'
+            };
+            return countryFlags[countryName] || '🏁';
         }
 
         function createCountdownElement(sessionName, date, index) {
@@ -147,31 +180,79 @@
         }
 
         async function fetchRaceData() {
-            let data = { 'race_name': 'Las Vegas Grand Prix', 'circuit_name': 'FORMULA 1 HEINEKEN LAS VEGAS GRAND PRIX 2025', 'country': 'United States', 'race_date': '2025-11-23T04:00:00', 'round': 22, 'session1': 'Practice 1', 'session1DateUtc': '2025-11-21T00:30:00', 'session2': 'Practice 2', 'session2DateUtc': '2025-11-21T04:00:00', 'session3': 'Practice 3', 'session3DateUtc': '2025-11-22T00:30:00', 'session4': 'Qualifying', 'session4DateUtc': '2025-11-22T04:00:00', 'session5': 'Race', 'session5DateUtc': '2025-11-23T04:00:00' }
+            let data = { "year": 2025, "races": [{ "race_name": "Pre-Season Testing", "circuit_name": "FORMULA 1 ARAMCO PRE-SEASON TESTING 2025", "country": "Bahrain", "race_date": "NaT", "round": 0, "session1": "Practice 1", "session1DateUtc": "2025-02-26T07:00:00", "session2": "Practice 2", "session2DateUtc": "2025-02-27T07:00:00", "session3": "Practice 3", "session3DateUtc": "2025-02-28T07:00:00", "session4": "None", "session4DateUtc": null, "session5": "None", "session5DateUtc": null, "isNextRace": false }, { "race_name": "Australian Grand Prix", "circuit_name": "FORMULA 1 LOUIS VUITTON AUSTRALIAN GRAND PRIX 2025", "country": "Australia", "race_date": "2025-03-16T04:00:00", "round": 1, "session1": "Practice 1", "session1DateUtc": "2025-03-14T01:30:00", "session2": "Practice 2", "session2DateUtc": "2025-03-14T05:00:00", "session3": "Practice 3", "session3DateUtc": "2025-03-15T01:30:00", "session4": "Qualifying", "session4DateUtc": "2025-03-15T05:00:00", "session5": "Race", "session5DateUtc": "2025-03-16T04:00:00", "isNextRace": false }, { "race_name": "Chinese Grand Prix", "circuit_name": "FORMULA 1 HEINEKEN CHINESE GRAND PRIX 2025", "country": "China", "race_date": "2025-03-23T07:00:00", "round": 2, "session1": "Practice 1", "session1DateUtc": "2025-03-21T03:30:00", "session2": "Sprint Qualifying", "session2DateUtc": "2025-03-21T07:30:00", "session3": "Sprint", "session3DateUtc": "2025-03-22T03:00:00", "session4": "Qualifying", "session4DateUtc": "2025-03-22T07:00:00", "session5": "Race", "session5DateUtc": "2025-03-23T07:00:00", "isNextRace": false }, { "race_name": "Japanese Grand Prix", "circuit_name": "FORMULA 1 LENOVO JAPANESE GRAND PRIX 2025 ", "country": "Japan", "race_date": "2025-04-06T05:00:00", "round": 3, "session1": "Practice 1", "session1DateUtc": "2025-04-04T02:30:00", "session2": "Practice 2", "session2DateUtc": "2025-04-04T06:00:00", "session3": "Practice 3", "session3DateUtc": "2025-04-05T02:30:00", "session4": "Qualifying", "session4DateUtc": "2025-04-05T06:00:00", "session5": "Race", "session5DateUtc": "2025-04-06T05:00:00", "isNextRace": false }, { "race_name": "Bahrain Grand Prix", "circuit_name": "FORMULA 1 GULF AIR BAHRAIN GRAND PRIX 2025", "country": "Bahrain", "race_date": "2025-04-13T15:00:00", "round": 4, "session1": "Practice 1", "session1DateUtc": "2025-04-11T11:30:00", "session2": "Practice 2", "session2DateUtc": "2025-04-11T15:00:00", "session3": "Practice 3", "session3DateUtc": "2025-04-12T12:30:00", "session4": "Qualifying", "session4DateUtc": "2025-04-12T16:00:00", "session5": "Race", "session5DateUtc": "2025-04-13T15:00:00", "isNextRace": false }, { "race_name": "Saudi Arabian Grand Prix", "circuit_name": "FORMULA 1 STC SAUDI ARABIAN GRAND PRIX 2025", "country": "Saudi Arabia", "race_date": "2025-04-20T17:00:00", "round": 5, "session1": "Practice 1", "session1DateUtc": "2025-04-18T13:30:00", "session2": "Practice 2", "session2DateUtc": "2025-04-18T17:00:00", "session3": "Practice 3", "session3DateUtc": "2025-04-19T13:30:00", "session4": "Qualifying", "session4DateUtc": "2025-04-19T17:00:00", "session5": "Race", "session5DateUtc": "2025-04-20T17:00:00", "isNextRace": false }, { "race_name": "Miami Grand Prix", "circuit_name": "FORMULA 1 CRYPTO.COM MIAMI GRAND PRIX 2025", "country": "United States", "race_date": "2025-05-04T20:00:00", "round": 6, "session1": "Practice 1", "session1DateUtc": "2025-05-02T16:30:00", "session2": "Sprint Qualifying", "session2DateUtc": "2025-05-02T20:30:00", "session3": "Sprint", "session3DateUtc": "2025-05-03T16:00:00", "session4": "Qualifying", "session4DateUtc": "2025-05-03T20:00:00", "session5": "Race", "session5DateUtc": "2025-05-04T20:00:00", "isNextRace": false }, { "race_name": "Emilia Romagna Grand Prix", "circuit_name": "FORMULA 1 AWS GRAN PREMIO DEL MADE IN ITALY E DELL'EMILIA-ROMAGNA 2025", "country": "Italy", "race_date": "2025-05-18T13:00:00", "round": 7, "session1": "Practice 1", "session1DateUtc": "2025-05-16T11:30:00", "session2": "Practice 2", "session2DateUtc": "2025-05-16T15:00:00", "session3": "Practice 3", "session3DateUtc": "2025-05-17T10:30:00", "session4": "Qualifying", "session4DateUtc": "2025-05-17T14:00:00", "session5": "Race", "session5DateUtc": "2025-05-18T13:00:00", "isNextRace": false }, { "race_name": "Monaco Grand Prix", "circuit_name": "FORMULA 1 TAG HEUER GRAND PRIX DE MONACO 2025", "country": "Monaco", "race_date": "2025-05-25T13:00:00", "round": 8, "session1": "Practice 1", "session1DateUtc": "2025-05-23T11:30:00", "session2": "Practice 2", "session2DateUtc": "2025-05-23T15:00:00", "session3": "Practice 3", "session3DateUtc": "2025-05-24T10:30:00", "session4": "Qualifying", "session4DateUtc": "2025-05-24T14:00:00", "session5": "Race", "session5DateUtc": "2025-05-25T13:00:00", "isNextRace": false }, { "race_name": "Spanish Grand Prix", "circuit_name": "FORMULA 1 ARAMCO GRAN PREMIO DE ESPA\u00d1A 2025", "country": "Spain", "race_date": "2025-06-01T13:00:00", "round": 9, "session1": "Practice 1", "session1DateUtc": "2025-05-30T11:30:00", "session2": "Practice 2", "session2DateUtc": "2025-05-30T15:00:00", "session3": "Practice 3", "session3DateUtc": "2025-05-31T10:30:00", "session4": "Qualifying", "session4DateUtc": "2025-05-31T14:00:00", "session5": "Race", "session5DateUtc": "2025-06-01T13:00:00", "isNextRace": false }, { "race_name": "Canadian Grand Prix", "circuit_name": "FORMULA 1 PIRELLI GRAND PRIX DU CANADA 2025", "country": "Canada", "race_date": "2025-06-15T18:00:00", "round": 10, "session1": "Practice 1", "session1DateUtc": "2025-06-13T17:30:00", "session2": "Practice 2", "session2DateUtc": "2025-06-13T21:00:00", "session3": "Practice 3", "session3DateUtc": "2025-06-14T16:30:00", "session4": "Qualifying", "session4DateUtc": "2025-06-14T20:00:00", "session5": "Race", "session5DateUtc": "2025-06-15T18:00:00", "isNextRace": false }, { "race_name": "Austrian Grand Prix", "circuit_name": "FORMULA 1 MSC CRUISES AUSTRIAN GRAND PRIX 2025", "country": "Austria", "race_date": "2025-06-29T13:00:00", "round": 11, "session1": "Practice 1", "session1DateUtc": "2025-06-27T11:30:00", "session2": "Practice 2", "session2DateUtc": "2025-06-27T15:00:00", "session3": "Practice 3", "session3DateUtc": "2025-06-28T10:30:00", "session4": "Qualifying", "session4DateUtc": "2025-06-28T14:00:00", "session5": "Race", "session5DateUtc": "2025-06-29T13:00:00", "isNextRace": false }, { "race_name": "British Grand Prix", "circuit_name": "FORMULA 1 QATAR AIRWAYS BRITISH GRAND PRIX 2025", "country": "United Kingdom", "race_date": "2025-07-06T14:00:00", "round": 12, "session1": "Practice 1", "session1DateUtc": "2025-07-04T11:30:00", "session2": "Practice 2", "session2DateUtc": "2025-07-04T15:00:00", "session3": "Practice 3", "session3DateUtc": "2025-07-05T10:30:00", "session4": "Qualifying", "session4DateUtc": "2025-07-05T14:00:00", "session5": "Race", "session5DateUtc": "2025-07-06T14:00:00", "isNextRace": false }, { "race_name": "Belgian Grand Prix", "circuit_name": "FORMULA 1 MO\u00cbT & CHANDON BELGIAN GRAND PRIX 2025", "country": "Belgium", "race_date": "2025-07-27T13:00:00", "round": 13, "session1": "Practice 1", "session1DateUtc": "2025-07-25T10:30:00", "session2": "Sprint Qualifying", "session2DateUtc": "2025-07-25T14:30:00", "session3": "Sprint", "session3DateUtc": "2025-07-26T10:00:00", "session4": "Qualifying", "session4DateUtc": "2025-07-26T14:00:00", "session5": "Race", "session5DateUtc": "2025-07-27T13:00:00", "isNextRace": false }, { "race_name": "Hungarian Grand Prix", "circuit_name": "FORMULA 1 LENOVO HUNGARIAN GRAND PRIX 2025", "country": "Hungary", "race_date": "2025-08-03T13:00:00", "round": 14, "session1": "Practice 1", "session1DateUtc": "2025-08-01T11:30:00", "session2": "Practice 2", "session2DateUtc": "2025-08-01T15:00:00", "session3": "Practice 3", "session3DateUtc": "2025-08-02T10:30:00", "session4": "Qualifying", "session4DateUtc": "2025-08-02T14:00:00", "session5": "Race", "session5DateUtc": "2025-08-03T13:00:00", "isNextRace": false }, { "race_name": "Dutch Grand Prix", "circuit_name": "FORMULA 1 HEINEKEN DUTCH GRAND PRIX 2025", "country": "Netherlands", "race_date": "2025-08-31T13:00:00", "round": 15, "session1": "Practice 1", "session1DateUtc": "2025-08-29T10:30:00", "session2": "Practice 2", "session2DateUtc": "2025-08-29T14:00:00", "session3": "Practice 3", "session3DateUtc": "2025-08-30T09:30:00", "session4": "Qualifying", "session4DateUtc": "2025-08-30T13:00:00", "session5": "Race", "session5DateUtc": "2025-08-31T13:00:00", "isNextRace": false }, { "race_name": "Italian Grand Prix", "circuit_name": "FORMULA 1 PIRELLI GRAN PREMIO D\u2019ITALIA 2025", "country": "Italy", "race_date": "2025-09-07T13:00:00", "round": 16, "session1": "Practice 1", "session1DateUtc": "2025-09-05T11:30:00", "session2": "Practice 2", "session2DateUtc": "2025-09-05T15:00:00", "session3": "Practice 3", "session3DateUtc": "2025-09-06T10:30:00", "session4": "Qualifying", "session4DateUtc": "2025-09-06T14:00:00", "session5": "Race", "session5DateUtc": "2025-09-07T13:00:00", "isNextRace": false }, { "race_name": "Azerbaijan Grand Prix", "circuit_name": "FORMULA 1 QATAR AIRWAYS AZERBAIJAN GRAND PRIX 2025", "country": "Azerbaijan", "race_date": "2025-09-21T11:00:00", "round": 17, "session1": "Practice 1", "session1DateUtc": "2025-09-19T08:30:00", "session2": "Practice 2", "session2DateUtc": "2025-09-19T12:00:00", "session3": "Practice 3", "session3DateUtc": "2025-09-20T08:30:00", "session4": "Qualifying", "session4DateUtc": "2025-09-20T12:00:00", "session5": "Race", "session5DateUtc": "2025-09-21T11:00:00", "isNextRace": false }, { "race_name": "Singapore Grand Prix", "circuit_name": "FORMULA 1 SINGAPORE AIRLINES SINGAPORE GRAND PRIX 2025", "country": "Singapore", "race_date": "2025-10-05T12:00:00", "round": 18, "session1": "Practice 1", "session1DateUtc": "2025-10-03T09:30:00", "session2": "Practice 2", "session2DateUtc": "2025-10-03T13:00:00", "session3": "Practice 3", "session3DateUtc": "2025-10-04T09:30:00", "session4": "Qualifying", "session4DateUtc": "2025-10-04T13:00:00", "session5": "Race", "session5DateUtc": "2025-10-05T12:00:00", "isNextRace": false }, { "race_name": "United States Grand Prix", "circuit_name": "FORMULA 1 MSC CRUISES UNITED STATES GRAND PRIX 2025", "country": "United States", "race_date": "2025-10-19T19:00:00", "round": 19, "session1": "Practice 1", "session1DateUtc": "2025-10-17T17:30:00", "session2": "Sprint Qualifying", "session2DateUtc": "2025-10-17T21:30:00", "session3": "Sprint", "session3DateUtc": "2025-10-18T17:00:00", "session4": "Qualifying", "session4DateUtc": "2025-10-18T21:00:00", "session5": "Race", "session5DateUtc": "2025-10-19T19:00:00", "isNextRace": false }, { "race_name": "Mexico City Grand Prix", "circuit_name": "FORMULA 1 GRAN PREMIO DE LA CIUDAD DE M\u00c9XICO 2025", "country": "Mexico", "race_date": "2025-10-26T20:00:00", "round": 20, "session1": "Practice 1", "session1DateUtc": "2025-10-24T18:30:00", "session2": "Practice 2", "session2DateUtc": "2025-10-24T22:00:00", "session3": "Practice 3", "session3DateUtc": "2025-10-25T17:30:00", "session4": "Qualifying", "session4DateUtc": "2025-10-25T21:00:00", "session5": "Race", "session5DateUtc": "2025-10-26T20:00:00", "isNextRace": false }, { "race_name": "S\u00e3o Paulo Grand Prix", "circuit_name": "FORMULA 1 MSC CRUISES GRANDE PR\u00caMIO DE S\u00c3O PAULO 2025", "country": "Brazil", "race_date": "2025-11-09T17:00:00", "round": 21, "session1": "Practice 1", "session1DateUtc": "2025-11-07T14:30:00", "session2": "Sprint Qualifying", "session2DateUtc": "2025-11-07T18:30:00", "session3": "Sprint", "session3DateUtc": "2025-11-08T14:00:00", "session4": "Qualifying", "session4DateUtc": "2025-11-08T18:00:00", "session5": "Race", "session5DateUtc": "2025-11-09T17:00:00", "isNextRace": false }, { "race_name": "Las Vegas Grand Prix", "circuit_name": "FORMULA 1 HEINEKEN LAS VEGAS GRAND PRIX 2025", "country": "United States", "race_date": "2025-11-23T04:00:00", "round": 22, "session1": "Practice 1", "session1DateUtc": "2025-11-21T00:30:00", "session2": "Practice 2", "session2DateUtc": "2025-11-21T04:00:00", "session3": "Practice 3", "session3DateUtc": "2025-11-22T00:30:00", "session4": "Qualifying", "session4DateUtc": "2025-11-22T04:00:00", "session5": "Race", "session5DateUtc": "2025-11-23T04:00:00", "isNextRace": true }, { "race_name": "Qatar Grand Prix", "circuit_name": "FORMULA 1 QATAR AIRWAYS QATAR GRAND PRIX 2025", "country": "Qatar", "race_date": "2025-11-30T16:00:00", "round": 23, "session1": "Practice 1", "session1DateUtc": "2025-11-28T13:30:00", "session2": "Sprint Qualifying", "session2DateUtc": "2025-11-28T17:30:00", "session3": "Sprint", "session3DateUtc": "2025-11-29T14:00:00", "session4": "Qualifying", "session4DateUtc": "2025-11-29T18:00:00", "session5": "Race", "session5DateUtc": "2025-11-30T16:00:00", "isNextRace": false }, { "race_name": "Abu Dhabi Grand Prix", "circuit_name": "FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2025 ", "country": "United Arab Emirates", "race_date": "2025-12-07T13:00:00", "round": 24, "session1": "Practice 1", "session1DateUtc": "2025-12-05T09:30:00", "session2": "Practice 2", "session2DateUtc": "2025-12-05T13:00:00", "session3": "Practice 3", "session3DateUtc": "2025-12-06T10:30:00", "session4": "Qualifying", "session4DateUtc": "2025-12-06T14:00:00", "session5": "Race", "session5DateUtc": "2025-12-07T13:00:00", "isNextRace": false }], "totalRaces": 25 }
+            
+            // Find the next race using isNextRace flag
+            const nextRace = data.races.find(race => race.isNextRace === true);
+            
+            if (nextRace) {
+                // Update main race info with next race
+                document.getElementById('raceName').textContent = nextRace.race_name;
+                document.getElementById('circuitName').textContent = nextRace.circuit_name;
+                document.getElementById('country').textContent = nextRace.country;
+                document.getElementById('round').textContent = nextRace.round;
+                document.getElementById('mainRaceDate').textContent = formatDateToLocalString(nextRace.race_date);
 
-            // Update main race info
-            document.getElementById('raceName').textContent = data.race_name;
-            document.getElementById('circuitName').textContent = data.circuit_name;
-            document.getElementById('country').textContent = data.country;
-            document.getElementById('round').textContent = data.round;
-            document.getElementById('mainRaceDate').textContent = formatDateToLocalString(data.race_date);
+                // Create session boxes with countdowns
+                const sessionsGrid = document.getElementById('sessionsGrid');
+                sessionsGrid.innerHTML = '';
+                for (let i = 1; i <= 4; i++) {
+                    const sessionName = nextRace[`session${i}`];
+                    const sessionDate = nextRace[`session${i}DateUtc`];
+                    if (sessionName && sessionName !== 'None' && sessionDate) {
+                        sessionsGrid.innerHTML += createCountdownElement(sessionName, sessionDate, i);
+                    }
+                }
 
-            // Create session boxes with countdowns
-            const sessionsGrid = document.getElementById('sessionsGrid');
-            sessionsGrid.innerHTML = '';
-            for (let i = 1; i <= 4; i++) {
-                const sessionName = data[`session${i}`];
-                const sessionDate = data[`session${i}DateUtc`];
-                sessionsGrid.innerHTML += createCountdownElement(sessionName, sessionDate, i);
+                // Start countdowns
+                setInterval(() => {
+                    updateCountdown(nextRace.race_date, 'mainRace');
+                    for (let i = 1; i <= 4; i++) {
+                        const sessionDate = nextRace[`session${i}DateUtc`];
+                        if (sessionDate) {
+                            updateCountdown(sessionDate, `session${i}`);
+                        }
+                    }
+                }, 1000);
             }
 
-            // Start countdowns
-            setInterval(() => {
-                updateCountdown(data.race_date, 'mainRace');
-                for (let i = 1; i <= 4; i++) {
-                    updateCountdown(data[`session${i}DateUtc`], `session${i}`);
-                }
-            }, 1000);
+            // Populate all races list
+            const racesList = document.getElementById('racesList');
+            data.races.forEach(race => {
+                // Skip pre-season testing or races with invalid dates
+                if (race.round === 0 || race.race_date === 'NaT') return;
+                
+                const raceDate = new Date(race.race_date + "Z");
+                const formattedDate = raceDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                
+                const isNext = race.isNextRace ? 'bg-red-50 border-l-4 border-red-600' : '';
+                
+                const flag = getCountryFlag(race.country);
+                
+                const raceItem = document.createElement('div');
+                raceItem.className = `p-4 hover:bg-gray-50 transition-colors ${isNext}`;
+                raceItem.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="text-2xl font-bold text-gray-400 w-12">${race.round}</div>
+                            <div class="text-3xl">${flag}</div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800">${race.race_name}</h3>
+                                <p class="text-sm text-gray-600">${race.country}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-gray-700">${formattedDate}</p>
+                            ${race.isNextRace ? '<span class="inline-block mt-1 px-2 py-1 text-xs font-bold text-white bg-red-600 rounded">NEXT</span>' : ''}
+                        </div>
+                    </div>
+                `;
+                racesList.appendChild(raceItem);
+            });
         }
 
         // Fetch data when page loads
